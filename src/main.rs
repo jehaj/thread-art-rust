@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 use std::fs::File;
-use rand::{thread_rng, Rng};
-use rand::distributions::Alphanumeric;
 
 #[derive(Debug, PartialEq, Eq)]
 struct Point {
@@ -23,9 +21,7 @@ fn main() {
     let info = reader.next_frame(&mut buf).unwrap();
     let _bytes = &buf[..info.buffer_size()];
     
-    println!("{:?}", bresenham(1, 1, 4, 4));
     let _lines = map_of_lines();
-    println!("{}", random_id());
 }
 
 fn bresenham(x0: u16, y0: u16, x1: u16, y1: u16) -> Vec<Point> {
@@ -93,17 +89,6 @@ fn map_of_lines() -> HashMap<LineID, Vec<Point>> {
     }
     
     return lines;
-}
-
-fn random_id() -> String {
-    let id_size = 12;
-    let rand_string: String = thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(id_size)
-        .map(char::from)
-        .collect();
-
-    return rand_string;
 }
 
 fn constrain(num: usize, max: usize) -> usize {
