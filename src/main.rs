@@ -3,6 +3,7 @@ use std::collections::HashSet;
 use std::fs::File;
 use std::path::Path;
 use std::io::BufWriter;
+use std::env;
 
 const IMAGE_SIZE: i32 = 400;
 const WRAPS: u16 = 2000;
@@ -24,7 +25,8 @@ struct LineID {
 
 fn main() {
     // open the file into array.
-    let decoder = png::Decoder::new(File::open("test.png").unwrap());
+    let args: Vec<String> = env::args().collect();
+    let decoder = png::Decoder::new(File::open(&args[1]).unwrap());
     let mut reader = decoder.read_info().unwrap();
     let mut buf = vec![0; reader.output_buffer_size()];
     let info = reader.next_frame(&mut buf).unwrap();
