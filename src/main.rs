@@ -98,7 +98,7 @@ fn main() {
     
     
     // write the resulting file
-    let path = Path::new(r"output.png");
+    let path = Path::new(&args[2]);
     let file = File::create(path).unwrap();
     let ref mut w = BufWriter::new(file);
     
