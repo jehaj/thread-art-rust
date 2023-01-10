@@ -113,11 +113,11 @@ fn main() {
     }
 
     // write the resulting image
-    let path = Path::new(&args[2]);
-    let file = File::create(path).unwrap();
-    let ref mut w = BufWriter::new(file);
+    let output_path = Path::new(&args[2]);
+    let output_file = File::create(output_path).unwrap();
+    let ref mut output_writer = BufWriter::new(output_file);
 
-    let mut encoder = png::Encoder::new(w, IMAGE_SIZE as u32, IMAGE_SIZE as u32);
+    let mut encoder = png::Encoder::new(output_writer, IMAGE_SIZE as u32, IMAGE_SIZE as u32);
     encoder.set_color(png::ColorType::Grayscale);
     encoder.set_depth(png::BitDepth::Eight);
     let mut writer = encoder.write_header().unwrap();
