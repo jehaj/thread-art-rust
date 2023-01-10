@@ -17,3 +17,4 @@ Cargo.lock
 # Manually added
 test.png
 output.png
+RESULT.txt
