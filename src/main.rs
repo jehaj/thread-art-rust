@@ -7,10 +7,10 @@ use std::io::Write;
 use std::path::Path;
 
 const IMAGE_SIZE: i32 = 400;
-const WRAPS: u16 = 2000 - 1;
-const CIRCLE_POINTS: u32 = 200;
+const WRAPS: u16 = 2500 - 1;
+const CIRCLE_POINTS: u32 = 314;
 const MINIMUM_DIFFERENCE: u32 = 20;
-const BRIGHTNESS_FACTOR: u32 = 50;
+const BRIGHTNESS_FACTOR: u32 = 30;
 
 #[derive(Debug, PartialEq, Eq)]
 struct Point {
@@ -107,8 +107,10 @@ fn main() {
     let points_path = input_path.parent().unwrap().join("RESULT.txt");
     let points_file = File::create(points_path).unwrap();
     let mut points_writer = BufWriter::new(points_file);
+    points_writer.write((CIRCLE_POINTS.to_string() + "\n").as_bytes()).unwrap();
+
     for point in point_list {
-        let value = point.to_string() + ",\n";
+        let value = point.to_string() + ",";
         points_writer.write(value.as_bytes()).unwrap();
     }
 

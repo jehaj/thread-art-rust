@@ -15,6 +15,4 @@ Cargo.lock
 /target
 
 # Manually added
-test.png
-output.png
-RESULT.txt
+testing/
