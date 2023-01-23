@@ -34,6 +34,10 @@ fn main() {
     let info = reader.next_frame(&mut buf).unwrap();
     let size = info.buffer_size();
     let bytes = &mut buf[..size];
+    if size != 160000 {
+        // the image is not the correct size
+        std::process::exit(1)
+    }
 
     let circle_coords = circle_coords();
     let lines = map_of_lines(&circle_coords);
@@ -107,7 +111,9 @@ fn main() {
     let points_path = input_path.parent().unwrap().join("RESULT.txt");
     let points_file = File::create(points_path).unwrap();
     let mut points_writer = BufWriter::new(points_file);
-    points_writer.write((CIRCLE_POINTS.to_string() + "\n").as_bytes()).unwrap();
+    points_writer
+        .write((CIRCLE_POINTS.to_string() + "\n").as_bytes())
+        .unwrap();
 
     for point in point_list {
         let value = point.to_string() + ",";
