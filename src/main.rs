@@ -28,7 +28,8 @@ fn main() {
     // open the file into array.
     let args: Vec<String> = env::args().collect();
     let input_path = Path::new(&args[1]);
-    let decoder = png::Decoder::new(File::open(input_path).unwrap());
+    let mut decoder = png::Decoder::new(File::open(input_path).unwrap());
+    decoder.set_transformations(png::Transformations::normalize_to_color8());
     let mut reader = decoder.read_info().unwrap();
     let mut buf = vec![0; reader.output_buffer_size()];
     let info = reader.next_frame(&mut buf).unwrap();
@@ -36,7 +37,7 @@ fn main() {
     let bytes = &mut buf[..size];
     if size != 160000 {
         // the image is not the correct size
-        std::process::exit(1)
+        std::process::exit(1);
     }
 
     let circle_coords = circle_coords();
