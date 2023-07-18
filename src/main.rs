@@ -6,18 +6,28 @@ use std::io::BufWriter;
 use std::io::Write;
 use std::path::Path;
 
-const IMAGE_SIZE: i32 = 400;
+// IMAGE_SIZE is the diameter of the frame in mm, if the thread width
+// is 1 mm. If it is .5 mm, then IMAGE_SIZE should be doubled.
+//     IMAGE_SIZE = frame_width(mm) / thread_width(mm).
+// E.g. a 40 cm frame with a .5 mm wide thread should have:
+//     IMAGE_SIZE = 400 / 0.5 = 800
+// which affects the result, so consider changing number of wraps, 
+// bWhichrightness factor etc.
+const IMAGE_SIZE: u16 = 400;
+const IMAGE_AREA: usize = IMAGE_SIZE as usize * IMAGE_SIZE as usize;
 const WRAPS: u16 = 2500 - 1;
-const CIRCLE_POINTS: u32 = 314;
-const MINIMUM_DIFFERENCE: u32 = 20;
-const BRIGHTNESS_FACTOR: u32 = 30;
+const CIRCLE_POINTS: u16 = 235;
+const MINIMUM_DIFFERENCE: u8 = 20;
+const BRIGHTNESS_FACTOR: u8 = 34;
 
+// represents a point/coordinate on the image.
 #[derive(Debug, PartialEq, Eq)]
 struct Point {
     x: u16,
     y: u16,
 }
 
+// represents a line from start point to end point.
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct LineID {
     start: u16,
@@ -35,7 +45,7 @@ fn main() {
     let info = reader.next_frame(&mut buf).unwrap();
     let size = info.buffer_size();
     let bytes = &mut buf[..size];
-    if size != 160000 {
+    if size != IMAGE_AREA {
         // the image is not the correct size
         std::process::exit(1);
     }
@@ -95,8 +105,8 @@ fn main() {
         }
     }
 
-    let mut output: [u8; (IMAGE_SIZE * IMAGE_SIZE) as usize] =
-        [255; (IMAGE_SIZE * IMAGE_SIZE) as usize];
+    let mut output: [u8; IMAGE_AREA] =
+        [255; IMAGE_AREA];
     for i in 1..point_list.len() {
         let p1 = point_list[i - 1] as u16;
         let p2 = point_list[i] as u16;
