@@ -28,7 +28,7 @@ fn main() {
     // E.g. a 40 cm frame with a .5 mm wide thread should have:
     //     IMAGE_SIZE = 400 / 0.5 = 800
     // which affects the result, so consider changing number of wraps, 
-    // bWhichrightness factor etc.
+    // Which brightness factor etc.
     let mut image_size = 400;
     let mut wraps = 2500 - 1;
     let mut circle_points = 235;
@@ -94,7 +94,7 @@ fn main() {
 
             let difference = (next_point_index as isize - point_index as isize).abs();
             if difference < minimum_difference as isize
-                || difference > (circle_coords.len() - minimum_difference as usize) as isize
+                || difference > (circle_coords.len() - minimum_difference) as isize
             {
                 continue;
             }
@@ -106,7 +106,7 @@ fn main() {
                 .unwrap();
             let mut weight = line.len() * 255;
             for pos in line {
-                let pixel = bytes[image_size as usize * pos.y as usize + pos.x as usize];
+                let pixel = bytes[image_size * pos.y as usize + pos.x as usize];
                 weight = std::cmp::max(weight as isize - pixel as isize, 0) as usize;
             }
 
@@ -124,9 +124,9 @@ fn main() {
         point_index = max_point_index;
 
         for pos in max_line {
-            let pixel_value = bytes[image_size as usize * pos.y as usize + pos.x as usize];
-            let value = std::cmp::min(255, pixel_value as usize + brightness_factor as usize) as u8;
-            bytes[image_size as usize * pos.y as usize + pos.x as usize] = value;
+            let pixel_value = bytes[image_size * pos.y as usize + pos.x as usize];
+            let value = std::cmp::min(255, pixel_value as usize + brightness_factor) as u8;
+            bytes[image_size * pos.y as usize + pos.x as usize] = value;
         }
     }
 
@@ -136,9 +136,9 @@ fn main() {
         let p2 = point_list[i] as u16;
         let line = lines.get(&get_line_id(p1, p2)).unwrap();
         for pos in line {
-            let c_value = output[image_size as usize * pos.y as usize + pos.x as usize];
-            let value = std::cmp::max(c_value as isize - 20 as isize, 0) as u8;
-            output[image_size as usize * pos.y as usize + pos.x as usize] = value;
+            let c_value = output[image_size * pos.y as usize + pos.x as usize];
+            let value = std::cmp::max(c_value as isize - 20isize, 0) as u8;
+            output[image_size * pos.y as usize + pos.x as usize] = value;
         }
     }
 
@@ -236,16 +236,16 @@ fn circle_coords(image_size: usize, circle_points: usize) -> Vec<Point> {
         let size_half = (image_size / 2) as f64;
         x = constrain(
             (angle.cos() * size_half + size_half) as usize,
-            (image_size - 1) as usize,
+            image_size - 1,
         ) as u16;
         y = constrain(
             (angle.sin() * size_half + size_half) as usize,
-            (image_size - 1) as usize,
+            image_size - 1,
         ) as u16;
-        circle_coords.push(Point { x: x, y: y });
+        circle_coords.push(Point { x, y });
     }
 
-    return circle_coords;
+    circle_coords
 }
 
 fn map_of_lines(circle_coords: &Vec<Point>) -> HashMap<LineID, Vec<Point>> {
@@ -265,20 +265,20 @@ fn map_of_lines(circle_coords: &Vec<Point>) -> HashMap<LineID, Vec<Point>> {
         }
     }
 
-    return lines;
+    lines
 }
 
 fn constrain(num: usize, max: usize) -> usize {
     if max < num {
         return max;
     }
-    return num;
+    num
 }
 
 fn get_line_id(a: u16, b: u16) -> LineID {
     if a < b {
-        return LineID { start: a, end: b };
+        LineID { start: a, end: b }
     } else {
-        return LineID { start: b, end: a };
+        LineID { start: b, end: a }
     }
 }
